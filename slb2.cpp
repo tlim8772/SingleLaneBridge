@@ -61,5 +61,5 @@ int main() {
         jthread j1(t1, 1);
         jthread j2(t2, 2);
     }
-    //cout << "Final result " << test << endl;
+    cout << "Final result " << test << endl;
 }

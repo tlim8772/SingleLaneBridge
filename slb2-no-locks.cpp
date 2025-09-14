@@ -105,5 +105,5 @@ int main() {
         jthread t2(f2, 2);
     }
     
-    //cout << "Final result " << test << endl;
+    cout << "Final result " << test << endl;
 }
