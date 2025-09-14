@@ -66,6 +66,7 @@ struct SLB2NoLocks {
 
 SLB2NoLocks slb2;
 int test = 0;
+int test2 = 0;
 
 void printEnterBuy(int tid) {
     cout << tid << " enter buy" << endl;
@@ -95,7 +96,16 @@ void f2(int tid) {
     for (int i = 0; i < 1000000; i++) {
         slb2.enterSell();
         test--;
+        test2--;
         slb2.leaveSell();
+    }
+}
+
+void f3(int tid) {
+     for (int i = 0; i < 1000000; i++) {
+        slb2.enterBuy();
+        test2++;
+        slb2.leaveBuy();
     }
 }
 
@@ -103,7 +113,8 @@ int main() {
     {
         jthread t1(f1, 1);
         jthread t2(f2, 2);
+        jthread t3(f3, 3);
     }
     
-    cout << "Final result " << test << endl;
+    cout << "Final result " << test << " " << test2 << endl;
 }
