@@ -1,3 +1,5 @@
 .vscode/
 a.out
 test-tsan.cpp
+no-locks
+with-locks

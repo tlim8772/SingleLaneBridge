@@ -42,17 +42,17 @@ int test = 0;
 
 void t1(int tid) {
     for (int i = 0; i < 1000000; i++) {
-        slb2.enterBuy([tid](){});
+        slb2.enterBuy();
         test++;
-        slb2.leaveBuy([tid](){});
+        slb2.leaveBuy();
     }
 }
 
 void t2(int tid) {
     for (int i = 0; i < 1000000; i++) {
-        slb2.enterSell([tid](){});
+        slb2.enterSell();
         test--;
-        slb2.leaveSell([tid](){});
+        slb2.leaveSell();
     }
 }
 
@@ -61,5 +61,5 @@ int main() {
         jthread j1(t1, 1);
         jthread j2(t2, 2);
     }
-    cout << "Final result " << test << endl;
+    //cout << "Final result " << test << endl;
 }
