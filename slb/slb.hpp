@@ -26,7 +26,7 @@ struct SLB {
         if (buyCnt == 1) flag = true;
     }
 
-    void leaveBuy(function<void()> f) {
+    void leaveBuy(function<void()> f = [](){}) {
         unique_lock lock{mut};
         buyCnt --;
 
@@ -38,7 +38,7 @@ struct SLB {
         }
     }
 
-    void leaveSell(function<void()> f) {
+    void leaveSell(function<void()> f = [](){}) {
         unique_lock lock{mut};
         sellCnt --;
         
@@ -49,46 +49,3 @@ struct SLB {
         }
     }
 };
-
-int b = 0, s = 0;
-mutex mut;
-
-void safePrint(string s) {
-    lock_guard lk(mut);
-    cout << s << endl;
-}
-
-
-void buy(int id, SLB& slb) {
-    for (int i = 0; i < 2; i ++) {
-        slb.enterBuy();
-        cout << "buy enter" << endl;
-        sleep(1);
-        slb.leaveBuy([] () {cout << "wave done" << endl;});
-    }
-}
-
-void sell(int id, SLB& slb) {
-    for (int i = 0; i < 16; i ++) {
-        slb.enterSell();
-        cout << "sell enter" << endl;
-        //sleep(1);
-        slb.leaveSell([] () {cout << "wave done"  << endl;});
-    }
-}
-
-int main() {
-    SLB slb;
-
-    thread t1{buy, 0, ref(slb)};
-    thread t2{buy, 1, ref(slb)};
-    thread t3{sell, 2, ref(slb)};
-    thread t4{sell, 3, ref(slb)};
-
-    t4.join(); 
-    t3.join(); 
-    t2.join(); 
-    t1.join();
-
-    cout << b << " " << s << endl;
-}

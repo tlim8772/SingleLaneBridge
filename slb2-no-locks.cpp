@@ -104,7 +104,7 @@ void f2(int tid) {
 void f3(int tid) {
      for (int i = 0; i < 1000000; i++) {
         slb2.enterBuy();
-        test2++;
+        test2++; // to test whether buys can be inside together change test2 to test
         slb2.leaveBuy();
     }
 }

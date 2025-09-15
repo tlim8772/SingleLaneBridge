@@ -1,6 +1,6 @@
 CXX = g++
 STD = -std=c++23
-RELEASE = -g -fsanitize=thread
+RELEASE = -g
 
 no-locks:
 	$(CXX) $(STD) $(RELEASE) slb2-no-locks.cpp -o no-locks
