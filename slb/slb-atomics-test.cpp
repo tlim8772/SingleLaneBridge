@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
-#include "slb.hpp"
+using namespace std;
 
-// test when 1 buy takes very long, I cannot let sells just come in
+#include "slb-atomics.hpp"
 
-void t1f1(SLB& slb) {
+void t1f1(SLBAtomics& slb) {
     for (int r = 0; r < 2; r++) {
         slb.enterBuy();
         cout << "enter buy" << endl;
@@ -14,30 +14,30 @@ void t1f1(SLB& slb) {
     
 }
 
-void t1f2(SLB& slb, int& test) {
-    for (int i = 0; i < 1; i++) {
-        slb.enterSell(); // remove enterSell, enterBuy to see the difference
-        cout << "enter sell" << endl;
-        //test++;
+void t1f2(SLBAtomics& slb, int& test) {
+    for (int r = 0; r < 1; r++) {
+        slb.enterSell();
+        cout << "enter sell" << endl;;
+        test++;
         cout << "leave sell" << endl;
         slb.leaveSell();
     }
 }
 
 void test1() {
-    SLB slb;
+    SLBAtomics slb;
     int test = 0;
     {
         jthread t1(t1f1, ref(slb));
-        jthread t2(t1f2, ref(slb), ref(test)), t3(t1f2, ref(slb), ref(test));
+        vector<jthread> ths;
+        for (int i = 0; i < 2; i++) {
+            ths.push_back(std::move(jthread(t1f2, ref(slb), ref(test))));
+        }
     }
-
     cout << test << endl;
 }
 
-// test whether only 1 buy and 1 sell in the 'critical section'
-
-void t2f1(SLB& slb, int& i) {
+void t2f1(SLBAtomics& slb, int& i) {
     for (int r = 0; r < 1000000; r++) {
         slb.enterBuy();
         i++;
@@ -45,7 +45,7 @@ void t2f1(SLB& slb, int& i) {
     }
 }
 
-void t2f2(SLB& slb, int& i) {
+void t2f2(SLBAtomics& slb, int& i) {
     for (int r = 0; r < 1000000; r++) {
         slb.enterSell();
         i++;
@@ -54,11 +54,11 @@ void t2f2(SLB& slb, int& i) {
 }
 
 void test2() {
-    SLB slb;
+    SLBAtomics slb;
     int b = 0, s = 0;
     {
         jthread t1(t2f1, ref(slb), ref(b)), t2(t2f1, ref(slb), ref(b));
-        jthread t3(t2f2, ref(slb), ref(s));
+        jthread t3(t2f2, ref(slb), ref(s)), t4(t2f2, ref(slb), ref(s));
     }
     cout << b << " " << s << endl;
 }
